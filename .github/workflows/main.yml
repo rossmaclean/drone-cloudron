@@ -40,5 +40,5 @@ jobs:
           app-domain: ${{ env.APP_DOMAIN }}
           cloudron-server: ${{ env.CLOUDRON_SERVER }}
           cloudron-token: ${{ env.CLOUDRON_TOKEN }}
-          install-if-missing: "false"
+          install-if-missing: "true"
           skip-backup: "true"

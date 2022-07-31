@@ -16,6 +16,10 @@ WORKDIR /app/code
 COPY --from=build /app/code/drone-server /app/code/
 ADD drone.env /app/code/
 
+RUN mkdir -p /app/data
+RUN ln -sf /app/data /data
+RUN chown -R cloudron:cloudron /data
+
 COPY start.sh /app/pkg/
 
 CMD [ "/app/pkg/start.sh" ]
