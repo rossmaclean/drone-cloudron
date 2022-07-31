@@ -7,7 +7,10 @@ function setPermissions() {
 }
 
 function copyEnvFile() {
-#  cp -u /app/code/drone.env /app/data/
+  if [ ! -f $ENV_FILE ]
+  then
+    cp /app/code/drone.env /app/data/
+  fi
 }
 
 function setEnv() {
