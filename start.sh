@@ -2,9 +2,8 @@
 
 ENV_FILE=/app/data/drone.env
 
-function createDirsAndSetPermissions() {
-  mkdir /app/data
-  chown -R cloudron:cloudron /app/code /app/data /app/pkg
+function setPermissions() {
+  chown -R cloudron:cloudron /app/data
 }
 
 function copyEnvFile() {
@@ -23,7 +22,7 @@ function start() {
   /usr/local/bin/gosu cloudron:cloudron /app/code/drone-server
 }
 
-createDirsAndSetPermissions
+setPermissions
 copyEnvFile
 setEnv
 start
