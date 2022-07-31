@@ -1,0 +1,32 @@
+name: Deploy
+
+env:
+  DOCKER_USER: "rossmaclean"
+  APP_NAME: "drone"
+  CLOUDRON_SERVER: "my.rossmac.co.uk"
+  APP_DOMAIN: "drone.rossmac.co.uk"
+  CLOUDRON_TOKEN: ${{ secrets.CLOUDRON_TOKEN }}
+  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Define version'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloudron Deploy
+        uses: rossmaclean/cloudron-deploy-action@v0.0.17
+        with:
+          image: ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:${{ github.event.inputs.version }}
+          app-domain: ${{ env.APP_DOMAIN }}
+          cloudron-server: ${{ env.CLOUDRON_SERVER }}
+          cloudron-token: ${{ env.CLOUDRON_TOKEN }}
+          install-if-missing: "true"
+          skip-backup: "true"
+          environment: ${{ env.ENVIRONMENT }}

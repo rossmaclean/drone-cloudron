@@ -1,0 +1,44 @@
+name: Main CI
+
+env:
+  DOCKER_USER: "rossmaclean"
+  APP_NAME: "drone"
+  CLOUDRON_SERVER: "my.rossmac.co.uk"
+  APP_DOMAIN: "drone.rossmac.co.uk"
+  DOCKERHUB_TOKEM: ${{ secrets.DOCKERHUB_TOKEN }}
+  CLOUDRON_TOKEN: ${{ secrets.CLOUDRON_TOKEN }}
+  VERSION: "${GITHUB_SHA::7}"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build_push_image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Build Push
+        uses: rossmaclean/docker-build-push-action@v0.0.15
+        with:
+          docker-user: ${{ env.DOCKER_USER }}
+          image-name: ${{ env.APP_NAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          version: ${{ env.VERSION }}
+
+  deploy:
+    needs: build_push_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloudron Deploy
+        uses: rossmaclean/cloudron-deploy-action@v0.0.17
+        with:
+          image: ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:${{ env.VERSION }}
+          app-domain: ${{ env.APP_DOMAIN }}
+          cloudron-server: ${{ env.CLOUDRON_SERVER }}
+          cloudron-token: ${{ env.CLOUDRON_TOKEN }}
+          install-if-missing: "false"
+          skip-backup: "true"
